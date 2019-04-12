@@ -1,7 +1,8 @@
+#A simple Assembler Prototype Written in Python, Author : Sarthak Sharma
 class Assembler():
     def __init__(self):
         #defined instructions here
-        self.loadAcc = "Load Instruction"
+        self.load = "Load Instruction"
         self.move = "Move Instruction"
         self.add = "Add Instruction"
         self.inst_input_list = []
@@ -46,13 +47,13 @@ class Assembler():
         while True:
             inst =input(f"\n [Enter the Instruction] : ")
             if inst:
-                self.inst_input_list.append(s)
+                self.inst_input_list.append(inst)
             else:
-                break;
+                break
         print("\n\n\t\t\t ### Given Assembly Program ### : ")
-            for i in self.inst_input_list:
-                print (i)
-        self.ICGen(inst_input_list)
+        for i in self.inst_input_list:
+            print (i)
+        self.ICGen(self.inst_input_list)
 
 
     #This method shows the system Info.
@@ -79,10 +80,9 @@ class Assembler():
 
     def check_instruction_type(self, instruction):
         for key in self.instructionList:
-            if(instruction.find(key) == -1)
-
+            if(instruction.find(key) == -1):
+                print("")
             else:
-                print(f"\n ### Instruction Recognized {key} with OpCode {self.instructionList[key]} ")
                 if(self.instructionList[key] == "0b0000"):
                     return "Load Instruction"
                 elif(self.instructionList[key] == "0b0001"):
@@ -96,38 +96,38 @@ class Assembler():
         currLitIndex = 0
         ICCode = []
         for i_counter in range(0, len(inst_input_list)):
-            if(check_instruction_type(inst_input_list[i_counter]) == "Load Instruction"):
+            if(self.check_instruction_type(inst_input_list[i_counter]) == "Load Instruction"):
                 load_inst_split = inst_input_list[i_counter].split()
                 load_code = load_inst_split[0] + " " + f"({self.instructionType[self.load]},'0b0000')" + f"(REG,{load_inst_split[2]}) ({load_inst_split[3]}, {currLitIndex})"
                 ICCode.append(load_code)
                 LiteralTable[currLitIndex] = load_inst_split[3]
                 currLitIndex += 1
                 self.registerList[load_inst_split[2]] = load_inst_split[3]
-            elif(check_instruction_type(inst_input_list[i_counter]) == "Move Instruction"):
+            elif(self.check_instruction_type(inst_input_list[i_counter]) == "Move Instruction"):
                 move_inst_split = inst_input_list[i_counter].split()
                 move_code = move_inst_split[0] + " " + f"({self.instructionType[self.move]},'0b0001')" + f"(REG, {move_inst_split[2]}) (REG, {move_inst_split[3]})"
                 ICCode.append(move_code)
                 self.registerList[move_inst_split[2]] = self.registerList[move_inst_split[3]]
-            elif(check_instruction_type(inst_input_list[i_counter]) == "Add Instruction"):
+            elif(self.check_instruction_type(inst_input_list[i_counter]) == "Add Instruction"):
                 add_inst_split = inst_input_list[i_counter].split()
-                add_code = add_inst_split[0] + " " + f"({self.instructionType[self.add]},'0b0010')" + f"(REG, {add_inst_split[2]}) (REG, {move_inst_split[3]}) (REG, {move_inst_split[4]})"
+                add_code = add_inst_split[0] + " " + f"({self.instructionType[self.add]},'0b0010')" + f"(REG, {add_inst_split[2]}) (REG, {add_inst_split[3]}) (REG, {add_inst_split[4]})"
                 ICCode.append(add_code)
-                self.registerList[add_inst_split[2]] = self.registerList[add_inst_split[3]] + self.registerList[add_inst_split[4]]
+                self.registerList[add_inst_split[2]] = int(self.registerList[add_inst_split[3]]) + int(self.registerList[add_inst_split[4]])
 
         # Listing Out ALl the Data Structures now
         print("\n\n\n\t\t\t ### Listing out the current state of all the data structures... ###")
-        print("\n\n ### Register Table ###")
+        print("\n\n\t\t\t ### Register Table ###")
         for key,val in  self.registerList.items():
-            print(f"\n### {key} ------------> {val} ###")
-        print("\n\n ### OpCode Table ###")
+            print(f"\n\t\t### {key} ------------> {val} ###")
+        print("\n\n\t\t\t ### OpCode Table ###")
         for key, val in self.instructionList.items():
-            print(f"\n### {key} ------------> {val} ###")
-        print("\n\n ### Literal Table ###")
+            print(f"\n\t\t### {key} ------------> {val} ###")
+        print("\n\n\t\t\t ### Literal Table ###")
         for key, val in LiteralTable.items():
-            print(f"\n### {key} ------------> {val} ###")
+            print(f"\n\t\t### {key} ------------> {val} ###")
         print("\n\n\t\t\t ### Generating Intermediate Code Of the given Assembly Program : ")
         for ic in ICCode:
-            print(ic)
+            print("\t" + ic)
 
 if(__name__ == "__main__"):
     assembler = Assembler();
